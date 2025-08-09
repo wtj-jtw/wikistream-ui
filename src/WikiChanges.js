@@ -20,18 +20,33 @@ export default function WikiChanges() {
     };
 
     // You can either use event.type mapping or generic onmessage
-    es.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        // keep newest at top, limit to 100 items
-        setEvents(prev => {
-          const next = [data, ...prev];
-          return next.slice(0, 100);
-        });
-      } catch (err) {
-        console.error("error parsing event data", err);
-      }
-    };
+    // es.onmessage = (e) => {
+    //   console.log("Raw SSE data:", e.data);
+    //   try {
+    //     const data = JSON.parse(e.data);
+    //     // keep newest at top, limit to 100 items
+    //     setEvents(prev => {
+    //       const next = [data, ...prev];
+    //       return next.slice(0, 10);
+    //     });
+    //   } catch (err) {
+    //     console.error("error parsing event data", err);
+    //   }
+    // };
+
+    // 监听自定义事件
+    es.addEventListener("categorize", (e) => {
+    console.log("categorize event:", e.data);
+    try {
+      const data = JSON.parse(e.data);
+      setEvents(prev => {
+        const next = [data, ...prev];
+        return next.slice(0, 10);
+      });
+    } catch (err) {
+      console.error("error parsing event data", err);
+    }
+   });
 
     return () => {
       es.close();
